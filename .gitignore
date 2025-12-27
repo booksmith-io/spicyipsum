@@ -1,0 +1,4 @@
+*.swp
+tmp/
+.spicyipsumrc
+node_modules/
