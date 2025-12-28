@@ -1,0 +1,3 @@
+<div id="alert" role="alert" class="alert <% if (typeof alert === 'undefined') { %>d-none<% } else { %>alert-<%= alert.type %><% } %>">
+    <% if (typeof alert !== 'undefined') { %><%= alert.message %><% } _%>
+</div>

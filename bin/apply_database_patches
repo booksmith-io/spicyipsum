@@ -1,0 +1,59 @@
+#!/usr/bin/env bash
+
+function usage() {
+   cat << USAGE
+Usage:
+	${SCRIPT_NAME}
+
+Options:
+	-h, --help
+		show this help message
+
+USAGE
+}
+
+DIR_NAME=$(dirname "$0")
+SCRIPT_DIR=$(realpath "${DIR_NAME}")
+APP_DIR=$(realpath "${SCRIPT_DIR}/../")
+SCRIPT_NAME=$(basename $0)
+DB_FILEPATH=$(realpath "${APP_DIR}/db/spicyipsum.sqlite3")
+
+OPTS=$(getopt -o "h" --long "help" -n "${SCRIPT_NAME}" -- "$@")
+if [ $? != 0 ]; then
+    usage
+    exit 1
+fi
+eval set -- "${OPTS}"
+
+while true; do
+    case "$1" in
+        -h | --help ) usage; exit; ;;
+        -- ) shift; break ;;
+        * ) break ;;
+    esac
+done
+
+function apply_patch () {
+    patch_full_path=$1
+    patch=$(basename ${patch_full_path})
+
+    exists=$(sqlite3 -column -noheader -interactive ${DB_FILEPATH} "select count(*) from db_patch_history where patch_name = '${patch}'" 2> /dev/null)
+
+    if [ -z "${exists}" ] || [ "${exists}" -eq "0" ]; then
+        echo "applying ${patch_full_path}"
+
+        sqlite3 $DB_FILEPATH < $patch_full_path
+        if [ $? != 0 ]; then
+            echo "ERROR: ${patch_full_path} failed to apply"
+            exit 1
+        fi
+
+        sqlite3 $DB_FILEPATH "insert into db_patch_history (patch_name) values ('$patch')"
+    fi
+
+    return
+}
+
+for patch in $(ls -d -1 ${APP_DIR}/db/updates/*.sql 2> /dev/null); do
+    apply_patch ${patch}
+done

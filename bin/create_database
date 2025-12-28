@@ -1,0 +1,15 @@
+#!/bin/bash
+
+set -e
+
+DIR_NAME=$(dirname "$0")
+SCRIPT_DIR=$(realpath "${DIR_NAME}")
+APP_DIR=$(realpath "${SCRIPT_DIR}/../")
+DB_FILEPATH=$(realpath "${APP_DIR}/db/spicyipsum.sqlite3")
+
+if [ -f $DB_FILEPATH ]; then
+    echo "$DB_FILEPATH exists"
+    exit 1
+fi
+
+touch $DB_FILEPATH

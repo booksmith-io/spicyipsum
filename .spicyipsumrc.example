@@ -1,0 +1,16 @@
+{
+    "app": {
+        "name": "spicyipsum",
+        "port": 5000,
+        "address": "0.0.0.0"
+    },
+    "user_agent_blocks": [
+        "facebookexternalhit",
+        "facebookscraper",
+        "openai",
+        "anthropic",
+        "claude",
+        "amazonbot",
+        "Cortex-Xpanse"
+    ]
+}

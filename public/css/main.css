@@ -1,0 +1,122 @@
+/* main.css */
+
+body,
+body a,
+body h1,
+body h2,
+body h3,
+body h4,
+body h5,
+body i {
+    color: #364557;
+}
+
+h1 {
+    font-size: 2.2rem;
+}
+
+br {
+    display: block;
+    margin: 3px 0;
+}
+
+.row .col h3 {
+    padding-top: 0.32rem;
+}
+
+a {
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+i.info {
+    margin-left: 0.4rem;
+    font-size: 0.9rem;
+    font-weight: bolder;
+}
+
+.btn-light-alt {
+    color: #212529;
+    border: 1px solid #dee2e6;
+    background-color: #f8f9fa;
+}
+
+.btn-light-alt:hover, .btn-light-alt:active,
+.btn-light-alt:focus, .btn-light-alt:active:focus {
+    color: #212529;
+    border: 1px solid #dee2e6;
+    background-color: #EEEEEE;
+}
+
+.btn-light-outline,
+.btn-light-outline:hover, .btn-light-outline:active,
+.btn-light-outline:focus, .btn-light-outline:active:focus {
+    border: 1px solid #cfcfcf;
+}
+
+i.icon {
+    padding-right: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.button-group {
+    margin-top: 1.5rem;
+}
+
+.button-group .btn {
+    min-width: 6.5rem;
+    height: 2.5rem;
+    margin-right: 0.4rem;
+    padding-top: 0.35em;
+}
+
+.button-group a.btn {
+    padding-top: 0.45em;
+    text-decoration: none;
+}
+
+.btn-primary {
+    color: #fff;
+    background-color: #3C4E62;
+    border-color: #3C4E62;
+}
+
+.btn-primary:hover, .btn-primary:active,
+.btn-primary:focus, .btn-primary:active:focus {
+    color: #fff;
+    background-color: #495D73;
+    border-color: #495D73;
+}
+
+.btn-secondary {
+    color: #2D3B4A;
+    background: transparent none;
+    border-color: #2D3B4A;
+}
+
+.btn-secondary:hover, .btn-secondary:active,
+.btn-secondary:focus, .btn-secondary:active:focus {
+    color: #2D3B4A;
+    background-color: #EEEEEE;
+    border-color: #3C4E62;
+}
+
+button.btn:disabled {
+    background-color: #7088A4;
+    border-color: #7088A4;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* mobile */
+@media (max-width: 575px) {
+    h1 {
+        font-size: 1.75rem;
+    }
+}
+
+@media (max-width: 991px) {
+}

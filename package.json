@@ -1,0 +1,21 @@
+{
+  "dependencies": {
+    "ejs": "^3.1.10",
+    "express": "^5.1.0",
+    "knex": "^3.1.0",
+    "morgan": "^1.10.1",
+    "path": "^0.12.7",
+    "sqlite3": "^5.1.7"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "development": "NODE_ENV=development nodemon server.js",
+    "setup": "make install",
+    "update_deps": "make update_deps",
+    "upgrade": "make upgrade",
+    "upgrade_database": "make upgrade_database"
+  }
+}

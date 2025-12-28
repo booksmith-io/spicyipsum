@@ -2,3 +2,4 @@
 tmp/
 .spicyipsumrc
 node_modules/
+db/spicyipsum.sqlite3
