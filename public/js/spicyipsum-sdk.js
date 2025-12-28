@@ -1,20 +1,20 @@
 /* functions for interacting with the spicyipsum site
 */
 
-async function getWords() {
-    return await makeAPICall(`/api`, 'get');
+async function getWords(params) {
+    return await makeAPICall(`/api?${params}`, "get");
 }
 
 async function makeAPICall(endpoint, method, payload) {
     const requestUri = endpoint;
 
-    let request = {
+    const request = {
         method: method,
     };
 
-    if (method === 'post') {
+    if (method === "post") {
         request.headers = {
-            'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
+            "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
         };
 
         if (payload) {

@@ -11,8 +11,21 @@ body i {
     color: #364557;
 }
 
+.content {
+    max-width: 35rem;
+    margin-top: 2rem;
+}
+
 h1 {
     font-size: 2.2rem;
+}
+
+.heading {
+    font-family: Georgia, serif;
+}
+
+.subheading {
+    font-style: italic; 
 }
 
 br {
@@ -63,7 +76,8 @@ i.icon {
 }
 
 .button-group {
-    margin-top: 1.5rem;
+    margin-top: 0.67rem;
+    margin-bottom: 1rem;
 }
 
 .button-group .btn {
@@ -111,12 +125,20 @@ button.btn:disabled {
     pointer-events: none;
 }
 
-/* mobile */
-@media (max-width: 575px) {
-    h1 {
-        font-size: 1.75rem;
-    }
+.action-button {
+    width: 100%;
+    margin-bottom: 0.5rem;
 }
 
-@media (max-width: 991px) {
+/* mobile */
+@media (max-width: 767px) {
+    .content {
+        margin-top: 1rem;
+        padding-right: 1rem;
+        padding-left: 1rem;
+    }
+
+    h1 {
+        font-size: 1.9rem;
+    }
 }
