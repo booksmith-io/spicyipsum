@@ -8,12 +8,20 @@ const model = {
     words: require("./../models/words"),
 };
 
-router.get("/", async (req, res) => {
+router.use(express.json());
+
+router.get("/", (req, res) => {
+    res.render("api", {
+        layout: false,
+    });
+});
+
+router.post("/", async (req, res) => {
     const params = {
-        paragraphs: req.query.paragraphs,
-        sentences: req.query.sentences,
-        lorem: req.query.lorem,
-        wyrd: req.query.wyrd,
+        paragraphs: req.body.paragraphs,
+        sentences: req.body.sentences,
+        lorem: req.body.lorem,
+        wyrd: req.body.wyrd,
     };
 
     // ensure each of the param values is an integer if set.

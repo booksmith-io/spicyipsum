@@ -1,0 +1,48 @@
+<%- include('includes/header', {id: 'api'}) _%>
+<div class="row">
+    <div class="col-12">
+        <%- include('includes/alert') _%>
+        <%- include('includes/heading_subheading') _%>
+        <div class="row heading">
+            <h2>API</h2>
+        </div>
+        <p>Spicy words are also available programmatically through the API.</p>
+        <div class="row heading">
+            <h3>Options</h3>
+        </div>
+        <div class="row">
+            <ul>
+                <li title="a value of 1-10"><code>paragraphs</code><i class="bi bi-exclamation-circle info"></i></li>
+                <p>The number of paragraphs to generate</p>
+                <li title="a value of 1-10"><code>sentences</code><i class="bi bi-exclamation-circle info"></i></li>
+                <p>The number of sentences to generate</p>
+                <li title="a value of 0 or 1"><code>ipsum</code><i class="bi bi-exclamation-circle info"></i></li>
+                <p>Start the spice with 'Spicy ipsum dolor amet...'</p>
+                <li title="a value of 0 or 1"><code>wyrd</code><i class="bi bi-exclamation-circle info"></i></li>
+                <p>Make it Wyrd (romantasy)</p>
+            </ul>
+        </div>
+        <div class="row heading">
+            <h3>Example</h3>
+        </div>
+        <div class="codeblock">
+            <pre>
+$ curl -s -X POST \
+-H "Content-Type: application/json" \
+-d '{ "paragraphs": 5, "sentences": 1 }' \
+https://spicyipsum.com/api|json_pp
+{
+   "data" : [
+      "Embrace soft moans and dark sin...",
+      "Intoxicating pulling closer tight...",
+      "Hands traveling silken locked tog...",
+      "Tingling sensation entangled tens...",
+      "Hunger mouth on skin filling up..."
+   ]
+}
+            </pre>
+        </div>
+    </div>
+    <%- include('includes/colophon') _%>
+</div>
+<%- include('includes/footer') _%>

@@ -1,46 +1,41 @@
 <%- include('includes/header', {id: 'home'}) _%>
-<div class="row justify-content-center">
+<div class="row">
     <div class="col-12">
         <%- include('includes/alert') _%>
-        <div class="row heading">
-            <h1>Spicy Ipsum Generator</h1>
-        </div>
-        <p class="subheading">Lorem ipsum generator with a <span title="Cacao!">nip</span></p>
-        <div class="row">
-            <form id="get-ipsum-form" method="POST" class="mb-1">
-                <div class="row mb-2">
-                    <div class="col-md mb-1">
-                        <div class="form-floating">
-                            <input id="paragraphs" name="paragraphs" type="text" title="The number of paragraphs to generate: a value of 1-10" placeholder="Paragraphs" value="1" aria-label="Input for number of paragraphs" class="form-control">
-                            <label for="paragraphs">Paragraphs</label>
-                        </div>
-                    </div>
-                    <div class="col-md mb-1">
-                        <div class="form-floating">
-                            <input id="sentences" name="sentences" type="text" title="The number of sentences to generate: a value of 1-10" placeholder="Sentences" value="5" aria-label="Input for number of sentences" class="form-control">
-                            <label for="sentences">Sentences</label>
-                        </div>
+        <%- include('includes/heading_subheading') _%>
+        <form id="get-ipsum-form" method="POST" class="mb-1">
+            <div class="row mb-2">
+                <div class="col-md mb-1">
+                    <div class="form-floating">
+                        <input id="paragraphs" name="paragraphs" type="text" title="The number of paragraphs to generate: a value of 1-10" placeholder="Paragraphs" value="1" aria-label="Input for number of paragraphs" class="form-control">
+                        <label for="paragraphs">Paragraphs</label>
                     </div>
                 </div>
-                <div class="row mb-2">
-                    <div class="col-12">
-                        <div class="form-check form-check-inline">
-                            <input id="lorem" name="lorem" type="checkbox" title="Start the output with 'Spicy ipsum dolor amet...'" value="1" class="form-check-input">
-                            <label for="lorem" title="Start the spice with 'Spicy ipsum dolor amet...'" class="form-check-label">Lorem</label>
-                        </div>
-                        <div class="form-check form-check-inline">
-                            <input id="wyrd" name="wyrd" type="checkbox" title="Make it Wyrd (romantasy)" value="1" class="form-check-input">
-                            <label for="wyrd" title="Make it Wyrd (romantasy)" class="form-check-label">Wyrd</label>
-                        </div>
+                <div class="col-md mb-1">
+                    <div class="form-floating">
+                        <input id="sentences" name="sentences" type="text" title="The number of sentences to generate: a value of 1-10" placeholder="Sentences" value="5" aria-label="Input for number of sentences" class="form-control">
+                        <label for="sentences">Sentences</label>
                     </div>
                 </div>
-                <div class="button-group">
-                    <button id="generate" title="Give it to me" class="btn btn-light-alt action-button">Generate</button>
+            </div>
+            <div class="row mb-2">
+                <div class="col-12">
+                    <div class="form-check form-check-inline">
+                        <input id="lorem" name="lorem" type="checkbox" title="Start the output with 'Spicy ipsum dolor amet...'" value="1" class="form-check-input">
+                        <label for="lorem" title="Start the spice with 'Spicy ipsum dolor amet...'" class="form-check-label">Lorem</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input id="wyrd" name="wyrd" type="checkbox" title="Make it Wyrd (romantasy)" value="1" class="form-check-input">
+                        <label for="wyrd" title="Make it Wyrd (romantasy)" class="form-check-label">Wyrd</label>
+                    </div>
                 </div>
-            </form>
-        </div>
+            </div>
+            <div class="button-group">
+                <button id="generate" title="Give it to me" class="btn btn-light-alt action-button">Generate</button>
+            </div>
+        </form>
     </div>
-    <div id="spicyipsum" class="col-12 d-none">
+    <div id="spicyipsum" class="d-none">
         <div class="row">
             <div class="col-md mb-1">
                 <textarea class="form-control autoexpand" readonly></textarea>
@@ -50,5 +45,6 @@
             <button id="copy" title="Copy the spice to the clipboard" class="btn btn-light-alt action-button">Copy</button>
         </div>
     </div>
+    <%- include('includes/colophon') _%>
 </div>
 <%- include('includes/footer') _%>

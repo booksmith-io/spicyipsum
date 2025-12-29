@@ -20,6 +20,7 @@ app.set("views", path.resolve(__dirname, "./views"));
 
 const routes = {
     home: require("./routes/home"),
+    about: require("./routes/about"),
     api: require("./routes/api"),
 };
 
@@ -31,7 +32,8 @@ app.use(express.static("public"));
 app.use(async (req, res, next) => {
     res.locals.path = req.path;
     res.locals.app = config.app;
-    if (req.url.includes("/api")) {
+    res.locals.node_env = process.env["NODE_ENV"];
+    if (req.url.includes("/api") && req.method === 'POST') {
         res.locals.api = true;
     }
     next();
@@ -71,6 +73,7 @@ app.use((req, res, next) => {
 });
 
 app.use("/", routes.home);
+app.use("/about", routes.about);
 app.use("/api", routes.api);
 
 // default route response

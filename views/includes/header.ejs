@@ -3,14 +3,19 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="spicyipsum is a filler text generator with spice.">
+<meta name="keywords" content="Lorem ipsum, ipsum generator, filler text generator">
+<meta name="author" content="Blaine Motsinger">
 <title><%= app.name %></title>
 <link rel="stylesheet" href="/src/bootstrap-icons-1.11.3/font/bootstrap-icons.min.css">
 <link rel="stylesheet" href="/src/bootstrap-5.3.3/css/bootstrap.min.css">
 <script src="/src/bootstrap-5.3.3/js/bootstrap.bundle.min.js"></script>
 <script src="/src/jquery-3.7.1/jquery-3.7.1.min.js"></script>
 <link rel="stylesheet" href="/css/main.css">
+<% if (id === 'home') { _%>
 <script src="/js/spicyipsum-sdk.js"></script>
 <script src="/js/home.js"></script>
+<% } _%>
 </head>
 <body id="<%= id %>">
 <div class="content container-lg">

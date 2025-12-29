@@ -13,8 +13,7 @@ $(function() {
             params[value.name] = value.value;
         });
 
-        const query_params = new URLSearchParams(params);
-        const response = await getWords(query_params.toString());
+        const response = await getWords(params);
 
         if (response[0].ok === true) {
             let spicyipsum_text = response[1]["data"].join("\n\n");

@@ -1,8 +1,8 @@
 /* functions for interacting with the spicyipsum site
 */
 
-async function getWords(params) {
-    return await makeAPICall(`/api?${params}`, "get");
+async function getWords(payload) {
+    return await makeAPICall("/api", "post", payload);
 }
 
 async function makeAPICall(endpoint, method, payload) {
@@ -14,11 +14,11 @@ async function makeAPICall(endpoint, method, payload) {
 
     if (method === "post") {
         request.headers = {
-            "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
+            "content-type": "application/json",
         };
 
         if (payload) {
-            request.body = new URLSearchParams(payload);
+            request.body = JSON.stringify(payload);
         }
     }
 

@@ -46,8 +46,8 @@ a:hover {
 }
 
 i.info {
-    margin-left: 0.4rem;
-    font-size: 0.9rem;
+    margin-left: 0.5rem;
+    font-size: 0.8rem;
     font-weight: bolder;
 }
 
@@ -128,6 +128,32 @@ button.btn:disabled {
 .action-button {
     width: 100%;
     margin-bottom: 0.5rem;
+}
+
+#colophon {
+}
+
+#colophon li {
+    display: inline-block;
+}
+
+#colophon li a {
+    font-size: 0.9rem;
+    padding-right: 0.5rem;
+}
+
+.codeblock {
+    color: var(--bs-code-color);
+}
+
+.codeblock pre {
+    margin-top: 0.25rem;
+    margin-bottom: 0;
+    overflow-x: auto;
+}
+
+#api ul li {
+    list-style-type: none;
 }
 
 /* mobile */
