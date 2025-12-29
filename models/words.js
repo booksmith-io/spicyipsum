@@ -18,8 +18,13 @@ class Words extends base.Base {
 
     async get(params) {
         for (const param of ["paragraphs", "sentences"]) {
-            if (params[param] && (!Number.isInteger(params[param]) || params[param] <= 0)) {
-                throw new RangeError(`The ${param} parameter must be a positive integer`);
+            if (params[param]) {
+                if (!Number.isInteger(params[param]) || params[param] <= 0) {
+                    throw new RangeError(`The ${param} parameter must be a positive integer`);
+                }
+                if (params[param] > 10) {
+                    throw new RangeError(`The ${param} parameter must be between 1 and 10`);
+                }
             }
         }
 
