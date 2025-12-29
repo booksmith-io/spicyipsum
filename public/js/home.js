@@ -46,7 +46,7 @@ $(function() {
 
         let alert_message = "Unable to get spice";
         if (response[1]["message"]) {
-            alert_message = `${alert_message}: ${response[1]["message"]}`;
+            alert_message = `${response[1]["message"]}`;
         }
 
         alert_div.innerHTML = alert_message;
