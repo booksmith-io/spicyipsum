@@ -2,7 +2,7 @@
 
 "use strict";
 
-const version = "0.001";
+const version = "1.000";
 
 const express = require("express");
 const path = require("path");
