@@ -8,6 +8,7 @@
         "facebookexternalhit",
         "facebookscraper",
         "openai",
+        "OAI-SearchBot",
         "anthropic",
         "claude",
         "amazonbot",
