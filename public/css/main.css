@@ -28,6 +28,10 @@ h1 {
     font-style: italic; 
 }
 
+.block p {
+    margin-bottom: 0rem;
+}
+
 br {
     display: block;
     margin: 3px 0;

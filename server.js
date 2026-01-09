@@ -85,8 +85,9 @@ app.use((req, res) => {
         });
     } else {
         res.status(response.status.HTTP_NOT_FOUND.code)
-            .header("Content-Type", "text/plain")
-            .send(response.status.HTTP_NOT_FOUND.string);
+            .render("404", {
+                layout: false,
+            });
     }
     return;
 });
@@ -100,8 +101,9 @@ app.use((err, req, res, next) => {
         });
     } else {
         res.status(response.status.HTTP_INTERNAL_SERVER_ERROR.code)
-            .header("Content-Type", "text/plain")
-            .send(response.status.HTTP_INTERNAL_SERVER_ERROR.string);
+            .render("500", {
+                layout: false,
+            });
     }
     return;
 });
