@@ -8,6 +8,7 @@
     "sqlite3": "^5.1.7"
   },
   "devDependencies": {
+    "jest": "^30.2.0",
     "nodemon": "^3.1.10"
   },
   "scripts": {
@@ -16,6 +17,7 @@
     "setup": "make install",
     "update_deps": "make update_deps",
     "upgrade": "make upgrade",
-    "upgrade_database": "make upgrade_database"
+    "upgrade_database": "make upgrade_database",
+    "test": "jest"
   }
 }
