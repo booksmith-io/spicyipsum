@@ -18,7 +18,7 @@ class Words extends base.Base {
 
     async get(params) {
         for (const param of ["paragraphs", "sentences"]) {
-            if (params[param]) {
+            if (typeof params[param] !== 'undefined') {
                 if (!Number.isInteger(params[param]) || params[param] <= 0) {
                     throw new RangeError(`The ${param} parameter must be a positive integer`);
                 }
