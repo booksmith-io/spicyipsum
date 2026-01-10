@@ -5,6 +5,11 @@ $(function() {
     document.querySelector("form#get-ipsum-form").addEventListener("submit", async function(e) {
         e.preventDefault();
 
+        const alert_div = document.querySelector("#alert");
+
+        alert_div.innerHTML = "";
+        alert_div.classList.add(...["alert", "d-none"]);
+
         const form = $(this);
         const form_inputs = $(this).serializeArray();
 
@@ -41,8 +46,6 @@ $(function() {
 
             return;
         }
-
-        const alert_div = document.querySelector("#alert");
 
         let alert_message = "Unable to get spice";
         if (response[1]["message"]) {
