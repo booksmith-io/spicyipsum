@@ -1,4 +1,5 @@
-// spicyipsum
+// spicyipsum server
+// wrapper to run the app
 
 "use strict";
 
