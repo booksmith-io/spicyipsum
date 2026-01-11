@@ -1,0 +1,12 @@
+<%- include('includes/header', {id: 'ratelimit_error'}) _%>
+<div class="row">
+    <div class="col-12 mb-2">
+        <div class="row heading">
+            <h1>Too many requests</h1>
+        </div>
+        <div class="block" title="">
+            <p><%= message %></p>
+        </div>
+    </div>
+</div>
+<%- include('includes/footer') _%>
