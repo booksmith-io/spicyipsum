@@ -108,8 +108,8 @@ describe("app.js middleware", () => {
                 .set("User-Agent", "evilscraper");
 
             expect(response.status).toBe(406);
-            expect(response.headers["content-type"]).toMatch(/text\/plain/);
-            expect(response.text).toBe("Fuck you");
+            expect(response.type).toMatch(/html/);
+            expect(response.text).toContain("Fuck you");
         });
 
         it("should return JSON for blocked API POST requests", async () => {

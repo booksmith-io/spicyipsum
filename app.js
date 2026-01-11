@@ -56,7 +56,7 @@ app.use((req, res, next) => {
         }
         else {
             res.status(response.status.HTTP_BAD_REQUEST.code)
-                .render("400", {
+                .render(`${response.status.HTTP_BAD_REQUEST.code}`, {
                     layout: false,
                     message: response.status.HTTP_BAD_REQUEST.string,
                 });
@@ -81,7 +81,7 @@ app.use((req, res, next) => {
         }
         else {
             res.status(response.status.HTTP_TOO_MANY_REQUESTS.code)
-                .render("429", {
+                .render(`${response.status.HTTP_TOO_MANY_REQUESTS.code}`, {
                     layout: false,
                     message: response.status.HTTP_TOO_MANY_REQUESTS.string,
                 });
@@ -127,7 +127,7 @@ app.use((req, res, next) => {
             }
             else {
                 res.status(response.status.HTTP_TOO_MANY_REQUESTS.code)
-                    .render("429", {
+                    .render(`${response.status.HTTP_TOO_MANY_REQUESTS.code}`, {
                         layout: false,
                         message: response.status.HTTP_TOO_MANY_REQUESTS.string,
                     });
@@ -190,8 +190,10 @@ app.use((req, res, next) => {
                 });
             } else {
                 res.status(response.status.HTTP_UNACCEPTABLE.code)
-                    .header("Content-Type", "text/plain")
-                    .send(response.status.HTTP_UNACCEPTABLE.string);
+                    .render(`${response.status.HTTP_UNACCEPTABLE.code}`, {
+                        layout: false,
+                        message: response.status.HTTP_UNACCEPTABLE.string,
+                    });
             }
             return;
         }
@@ -212,7 +214,7 @@ app.use((req, res) => {
         });
     } else {
         res.status(response.status.HTTP_NOT_FOUND.code)
-            .render("404", {
+            .render(`${response.status.HTTP_NOT_FOUND.code}`, {
                 layout: false,
             });
     }
@@ -228,7 +230,7 @@ app.use((err, req, res, next) => {
         });
     } else {
         res.status(response.status.HTTP_INTERNAL_SERVER_ERROR.code)
-            .render("500", {
+            .render(`${response.status.HTTP_INTERNAL_SERVER_ERROR.code}`, {
                 layout: false,
             });
     }
