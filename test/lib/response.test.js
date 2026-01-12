@@ -60,6 +60,12 @@ describe("lib/response", () => {
             expect(status.HTTP_CONFLICT.code).toBe(409);
             expect(status.HTTP_CONFLICT.string).toBe("That resource already exists");
         });
+
+        it("should define HTTP_TOO_MANY_REQUESTS with code 429", () => {
+            expect(status.HTTP_TOO_MANY_REQUESTS).toBeDefined();
+            expect(status.HTTP_TOO_MANY_REQUESTS.code).toBe(429);
+            expect(status.HTTP_TOO_MANY_REQUESTS.string).toBe("You're being naughty (and not in a good way). You're in timeout.");
+        });
     });
 
     describe("server error status codes", () => {

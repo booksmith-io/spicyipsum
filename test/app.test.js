@@ -2,6 +2,24 @@
 
 const request = require("supertest");
 
+// Mock node-cache before requiring app
+const mockCacheGet = jest.fn();
+const mockCacheSet = jest.fn();
+const mockCacheTake = jest.fn();
+jest.mock("node-cache", () => {
+    return jest.fn().mockImplementation(() => ({
+        get: mockCacheGet,
+        set: mockCacheSet,
+        take: mockCacheTake,
+    }));
+});
+
+// Mock datetime before requiring app
+const mockCurrentTimestamp = jest.fn();
+jest.mock("../lib/datetime", () => ({
+    current_timestamp: mockCurrentTimestamp,
+}));
+
 // Mock config before requiring app
 jest.mock("../lib/config", () => ({
     app: {
@@ -33,7 +51,25 @@ describe("app.js middleware", () => {
         jest.resetModules();
         jest.clearAllMocks();
 
+        // Reset cache mocks - default to cache miss so ratelimiting doesn't block
+        mockCacheGet.mockReturnValue(undefined);
+        mockCacheSet.mockReturnValue(true);
+        mockCacheTake.mockReturnValue(undefined);
+
+        // Default timestamp
+        mockCurrentTimestamp.mockReturnValue(1704067200);
+
         // Re-mock after resetModules
+        jest.doMock("node-cache", () => {
+            return jest.fn().mockImplementation(() => ({
+                get: mockCacheGet,
+                set: mockCacheSet,
+                take: mockCacheTake,
+            }));
+        });
+        jest.doMock("../lib/datetime", () => ({
+            current_timestamp: mockCurrentTimestamp,
+        }));
         jest.doMock("../lib/config", () => ({
             app: {
                 name: "spicyipsum",
@@ -273,6 +309,148 @@ describe("app.js middleware", () => {
             const response = await request(app).get("/");
 
             expect(response.headers["etag"]).toBeUndefined();
+        });
+    });
+
+    describe("IP address ratelimiting middleware", () => {
+        it("should allow first request from an IP address", async () => {
+            const response = await request(app).get("/");
+
+            expect(response.status).toBe(200);
+        });
+
+        it("should track request count for IP address", async () => {
+            await request(app).get("/");
+
+            // Should set the request count cache key
+            expect(mockCacheSet).toHaveBeenCalledWith(
+                expect.stringMatching(/^request_.*_1704067200$/),
+                1,
+                2
+            );
+        });
+
+        it("should increment request count for subsequent requests in same second", async () => {
+            // Simulate existing request count of 3
+            mockCacheTake.mockReturnValue(3);
+
+            await request(app).get("/");
+
+            // Should set incremented count (4)
+            expect(mockCacheSet).toHaveBeenCalledWith(
+                expect.stringMatching(/^request_.*_1704067200$/),
+                4,
+                2
+            );
+        });
+
+        it("should return 429 when IP is already ratelimited", async () => {
+            // Simulate ratelimited IP
+            mockCacheGet.mockImplementation((key) => {
+                if (key.includes("_ratelimit")) return 1704067500;
+                return undefined;
+            });
+
+            const response = await request(app).get("/");
+
+            expect(response.status).toBe(429);
+        });
+
+        it("should return HTML 429 for non-API ratelimited requests", async () => {
+            mockCacheGet.mockImplementation((key) => {
+                if (key.includes("_ratelimit")) return 1704067500;
+                return undefined;
+            });
+
+            const response = await request(app).get("/about");
+
+            expect(response.status).toBe(429);
+            expect(response.type).toMatch(/html/);
+            expect(response.text).toContain("naughty");
+        });
+
+        it("should return JSON 429 for API ratelimited POST requests", async () => {
+            mockCacheGet.mockImplementation((key) => {
+                if (key.includes("_ratelimit")) return 1704067500;
+                return undefined;
+            });
+
+            const response = await request(app)
+                .post("/api")
+                .send({})
+                .set("Content-Type", "application/json");
+
+            expect(response.status).toBe(429);
+            expect(response.type).toMatch(/json/);
+            expect(response.body.message).toContain("naughty");
+        });
+
+        it("should ratelimit IP after more than 7 requests per second", async () => {
+            // Simulate 7 requests already made this second
+            mockCacheTake.mockReturnValue(7);
+
+            const response = await request(app).get("/");
+
+            expect(response.status).toBe(429);
+            // Should set ratelimit key with 300 second TTL
+            expect(mockCacheSet).toHaveBeenCalledWith(
+                expect.stringMatching(/^request_.*_ratelimit$/),
+                expect.any(Number),
+                300
+            );
+        });
+
+        it("should allow exactly 7 requests per second without ratelimiting", async () => {
+            // Simulate 6 requests already made this second (next will be 7th)
+            mockCacheTake.mockReturnValue(6);
+
+            const response = await request(app).get("/");
+
+            expect(response.status).toBe(200);
+        });
+
+        it("should throw error when ratelimit cache set fails", async () => {
+            const consoleSpy = jest.spyOn(console, "error").mockImplementation();
+
+            // Simulate 7 requests and cache set failure
+            mockCacheTake.mockReturnValue(7);
+            mockCacheSet.mockImplementation((key) => {
+                if (key.includes("_ratelimit")) return undefined;
+                return true;
+            });
+
+            const response = await request(app).get("/");
+
+            expect(response.status).toBe(500);
+
+            consoleSpy.mockRestore();
+        });
+
+        it("should throw error when request count cache set fails on first request", async () => {
+            const consoleSpy = jest.spyOn(console, "error").mockImplementation();
+
+            // Cache set fails
+            mockCacheSet.mockReturnValue(undefined);
+
+            const response = await request(app).get("/");
+
+            expect(response.status).toBe(500);
+
+            consoleSpy.mockRestore();
+        });
+
+        it("should throw error when request count cache set fails on subsequent requests", async () => {
+            const consoleSpy = jest.spyOn(console, "error").mockImplementation();
+
+            // Simulate existing count, but cache set fails
+            mockCacheTake.mockReturnValue(3);
+            mockCacheSet.mockReturnValue(undefined);
+
+            const response = await request(app).get("/");
+
+            expect(response.status).toBe(500);
+
+            consoleSpy.mockRestore();
         });
     });
 });

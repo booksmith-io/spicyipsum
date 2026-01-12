@@ -1,5 +1,17 @@
 // Unit tests for models/words.js
 
+// Mock node-cache before requiring the module
+const mockCacheGet = jest.fn();
+const mockCacheSet = jest.fn();
+const mockCacheTake = jest.fn();
+jest.mock("node-cache", () => {
+    return jest.fn().mockImplementation(() => ({
+        get: mockCacheGet,
+        set: mockCacheSet,
+        take: mockCacheTake,
+    }));
+});
+
 const mockTypes = [
     { type_id: 1, name: "spice" },
     { type_id: 2, name: "wyrd" },
@@ -49,6 +61,10 @@ describe("models/words", () => {
     beforeEach(() => {
         jest.resetModules();
         jest.clearAllMocks();
+
+        // Reset cache mocks - default to cache miss (undefined) so DB is called
+        mockCacheGet.mockReturnValue(undefined);
+        mockCacheSet.mockReturnValue(true);
 
         mockDbh.mockImplementation((table) => {
             if (table === "types") {
@@ -301,6 +317,145 @@ describe("models/words", () => {
 
             await expect(instance.get({}))
                 .rejects.toThrow("No words were found in the database (is it setup correctly?)");
+        });
+    });
+
+    describe("get method - caching behavior", () => {
+        it("should check cache for types before querying database", async () => {
+            const instance = new Words();
+
+            await instance.get({});
+
+            expect(mockCacheGet).toHaveBeenCalledWith("types_select_type_id_name");
+        });
+
+        it("should use cached types when available", async () => {
+            mockCacheGet.mockImplementation((key) => {
+                if (key === "types_select_type_id_name") return mockTypes;
+                if (key === "types_obj") return { spice: 1, wyrd: 2 };
+                if (key.startsWith("words_select_text_type_id_in_")) return mockWords;
+                return undefined;
+            });
+
+            const instance = new Words();
+            await instance.get({});
+
+            // Database should not be called for types since cache returned data
+            expect(mockDbh).not.toHaveBeenCalledWith("types");
+        });
+
+        it("should cache types after fetching from database", async () => {
+            const instance = new Words();
+
+            await instance.get({});
+
+            expect(mockCacheSet).toHaveBeenCalledWith("types_select_type_id_name", mockTypes);
+        });
+
+        it("should check cache for types_obj", async () => {
+            const instance = new Words();
+
+            await instance.get({});
+
+            expect(mockCacheGet).toHaveBeenCalledWith("types_obj");
+        });
+
+        it("should cache types_obj after building it", async () => {
+            const instance = new Words();
+
+            await instance.get({});
+
+            expect(mockCacheSet).toHaveBeenCalledWith("types_obj", { spice: 1, wyrd: 2 });
+        });
+
+        it("should check cache for words with correct key based on type_ids", async () => {
+            const instance = new Words();
+
+            await instance.get({});
+
+            expect(mockCacheGet).toHaveBeenCalledWith("words_select_text_type_id_in_1");
+        });
+
+        it("should include wyrd type in cache key when wyrd param is 1", async () => {
+            const instance = new Words();
+
+            await instance.get({ wyrd: 1 });
+
+            expect(mockCacheGet).toHaveBeenCalledWith("words_select_text_type_id_in_1_2");
+        });
+
+        it("should use cached words when available", async () => {
+            mockCacheGet.mockImplementation((key) => {
+                if (key === "types_select_type_id_name") return mockTypes;
+                if (key === "types_obj") return { spice: 1, wyrd: 2 };
+                if (key === "words_select_text_type_id_in_1") return mockWords;
+                return undefined;
+            });
+
+            const instance = new Words();
+            await instance.get({});
+
+            // Database should not be called for words since cache returned data
+            expect(mockDbh).not.toHaveBeenCalledWith("words");
+        });
+
+        it("should cache words after fetching from database", async () => {
+            const instance = new Words();
+
+            await instance.get({});
+
+            expect(mockCacheSet).toHaveBeenCalledWith("words_select_text_type_id_in_1", mockWords);
+        });
+
+        it("should log error when types cache set fails", async () => {
+            const consoleSpy = jest.spyOn(console, "error").mockImplementation();
+            mockCacheSet.mockImplementation((key) => {
+                if (key === "types_select_type_id_name") return undefined;
+                return true;
+            });
+
+            const instance = new Words();
+            await instance.get({});
+
+            expect(consoleSpy).toHaveBeenCalledWith(
+                "[error] 'types_select_type_id_name' cache key failed to set"
+            );
+
+            consoleSpy.mockRestore();
+        });
+
+        it("should log error when types_obj cache set fails", async () => {
+            const consoleSpy = jest.spyOn(console, "error").mockImplementation();
+            mockCacheSet.mockImplementation((key) => {
+                if (key === "types_obj") return undefined;
+                return true;
+            });
+
+            const instance = new Words();
+            await instance.get({});
+
+            expect(consoleSpy).toHaveBeenCalledWith(
+                "[error] 'types_obj' cache key failed to set"
+            );
+
+            consoleSpy.mockRestore();
+        });
+
+        it("should log error when words cache set fails", async () => {
+            const consoleSpy = jest.spyOn(console, "error").mockImplementation();
+            mockCacheSet.mockImplementation((key) => {
+                if (key.startsWith("words_select_text_type_id_in_")) return undefined;
+                return true;
+            });
+
+            const instance = new Words();
+            await instance.get({});
+
+            expect(consoleSpy).toHaveBeenCalledWith(
+                "[error] 'words_select_text_type_id_in_1' cache key failed to set"
+            );
+
+            consoleSpy.mockRestore();
         });
     });
 
