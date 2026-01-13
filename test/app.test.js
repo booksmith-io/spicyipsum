@@ -316,6 +316,74 @@ describe("app.js middleware", () => {
             expect(response.status).toBe(200);
         });
 
+        it("should use last IP from x-forwarded-for when multiple IPs present", async () => {
+            const response = await request(app)
+                .get("/")
+                .set("x-forwarded-for", "192.168.1.1, 10.0.0.1, 203.0.113.50");
+
+            expect(response.status).toBe(200);
+            // Verify the cache key uses the last IP (203.0.113.50)
+            expect(mockCacheSet).toHaveBeenCalledWith(
+                expect.stringMatching(/^request_203\.0\.113\.50_1704067200$/),
+                1,
+                2
+            );
+        });
+
+        it("should use single x-forwarded-for IP when valid", async () => {
+            const response = await request(app)
+                .get("/")
+                .set("x-forwarded-for", "198.51.100.25");
+
+            expect(response.status).toBe(200);
+            expect(mockCacheSet).toHaveBeenCalledWith(
+                expect.stringMatching(/^request_198\.51\.100\.25_1704067200$/),
+                1,
+                2
+            );
+        });
+
+        it("should fall back to req.ip when x-forwarded-for is invalid", async () => {
+            const response = await request(app)
+                .get("/")
+                .set("x-forwarded-for", "not-a-valid-ip");
+
+            expect(response.status).toBe(200);
+            // Should fall back to req.ip, which supertest sets to ::ffff:127.0.0.1 or 127.0.0.1
+            expect(mockCacheSet).toHaveBeenCalledWith(
+                expect.stringMatching(/^request_.*127\.0\.0\.1_1704067200$/),
+                1,
+                2
+            );
+        });
+
+        it("should fall back to req.ip when x-forwarded-for contains invalid IP among multiple", async () => {
+            const response = await request(app)
+                .get("/")
+                .set("x-forwarded-for", "192.168.1.1, invalid-ip");
+
+            expect(response.status).toBe(200);
+            // Last IP is invalid, so should fall back to req.ip
+            expect(mockCacheSet).toHaveBeenCalledWith(
+                expect.stringMatching(/^request_.*127\.0\.0\.1_1704067200$/),
+                1,
+                2
+            );
+        });
+
+        it("should trim whitespace from x-forwarded-for IP addresses", async () => {
+            const response = await request(app)
+                .get("/")
+                .set("x-forwarded-for", "192.168.1.1,   203.0.113.75   ");
+
+            expect(response.status).toBe(200);
+            expect(mockCacheSet).toHaveBeenCalledWith(
+                expect.stringMatching(/^request_203\.0\.113\.75_1704067200$/),
+                1,
+                2
+            );
+        });
+
         it("should track request count for IP address", async () => {
             await request(app).get("/");
 

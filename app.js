@@ -42,12 +42,31 @@ app.use(async (req, res, next) => {
 
 // enforce ratelimits for requests
 app.use((req, res, next) => {
-    const ip_address = req.ip;
+    let ip_address = req.headers['x-forwarded-for'];
 
-    // if they don't have an IP address for the request, they're probably doing
-    // shady business.  we're not into that.
-    // but really, we need it to check for ratelimiting.  we can't enforce it
-    // if it's not there.
+    // x-forwarded-for can be spoofed, but lucky for us, the webserver
+    // (at least apache as its configured on spicyipsum.com's host)
+    // puts the the real IP at the last of the string.  so we just need
+    // to split and trim and should be able to not worry about a spoofed
+    // IP addresses here.
+    if (ip_address !== undefined) {
+        const ip_array = ip_address.split(",");
+        if (ip_array.length > 1) {
+            ip_address = ip_array[ip_array.length - 1].trim();
+        }
+    }
+
+    const ip_regex = /^(((?!25?[6-9])[12]\d|[1-9])?\d\.?\b){4}$/;
+    if (ip_address === undefined || !ip_address.match(ip_regex)) {
+
+        // so... since this is an opensource project, we can't assume
+        // this is running behind a proxy frontend webserver.  if
+        // x-forwarded-for isn't set, or isn't a valid IP string, grab
+        // the request IP.
+        ip_address = req.ip;
+    }
+
+    // at this point this should never be the case.  but just in case.
     if (ip_address === undefined) {
         if (res.locals.api) {
             res.status(response.status.HTTP_BAD_REQUEST.code).json({
