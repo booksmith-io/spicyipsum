@@ -1,11 +1,11 @@
 /* functions for interacting with the spicyipsum site
-*/
+ */
 
-async function getWords(payload) {
+async function getWords (payload) {
     return await makeAPICall("/api", "post", payload);
 }
 
-async function makeAPICall(endpoint, method, payload) {
+async function makeAPICall (endpoint, method, payload) {
     const requestUri = endpoint;
 
     const request = {

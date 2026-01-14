@@ -9,7 +9,15 @@ jest.mock("../../lib/config", () => ({
         port: 3000,
         address: "localhost",
     },
-    user_agent_blocks: [],
+    ratelimits: {
+        enabled: 0,
+        requests_threshold: 7,
+        block_seconds: 300,
+    },
+    user_agent_blocks: {
+        enabled: 0,
+        user_agents: [],
+    },
 }));
 
 // Mock dbh (used by models)
@@ -21,9 +29,10 @@ jest.mock("morgan", () => () => (req, res, next) => next());
 // Mock the Words model
 const mockGet = jest.fn();
 jest.mock("../../models/words", () => ({
-    Words: jest.fn().mockImplementation(() => ({
-        get: mockGet,
-    })),
+    Words: jest.fn()
+        .mockImplementation(() => ({
+            get: mockGet,
+        })),
 }));
 
 describe("routes/api", () => {
@@ -40,7 +49,15 @@ describe("routes/api", () => {
                 port: 3000,
                 address: "localhost",
             },
-            user_agent_blocks: [],
+            ratelimits: {
+                enabled: 0,
+                requests_threshold: 7,
+                block_seconds: 300,
+            },
+            user_agent_blocks: {
+                enabled: 0,
+                user_agents: [],
+            },
         }));
         jest.doMock("../../lib/dbh", () => jest.fn());
         jest.doMock("morgan", () => () => (req, res, next) => next());
@@ -48,9 +65,10 @@ describe("routes/api", () => {
         // Reset and re-mock Words
         mockGet.mockReset();
         jest.doMock("../../models/words", () => ({
-            Words: jest.fn().mockImplementation(() => ({
-                get: mockGet,
-            })),
+            Words: jest.fn()
+                .mockImplementation(() => ({
+                    get: mockGet,
+                })),
         }));
 
         app = require("../../app");
@@ -62,21 +80,27 @@ describe("routes/api", () => {
 
     describe("GET /api", () => {
         it("should return 200 status", async () => {
-            const response = await request(app).get("/api");
+            const response = await request(app)
+                .get("/api");
 
-            expect(response.status).toBe(200);
+            expect(response.status)
+                .toBe(200);
         });
 
         it("should return HTML content type", async () => {
-            const response = await request(app).get("/api");
+            const response = await request(app)
+                .get("/api");
 
-            expect(response.type).toMatch(/html/);
+            expect(response.type)
+                .toMatch(/html/);
         });
 
         it("should contain the API heading", async () => {
-            const response = await request(app).get("/api");
+            const response = await request(app)
+                .get("/api");
 
-            expect(response.text).toContain("<h2>API</h2>");
+            expect(response.text)
+                .toContain("<h2>API</h2>");
         });
     });
 
@@ -89,7 +113,8 @@ describe("routes/api", () => {
                 .send({ paragraphs: 1, sentences: 1 })
                 .set("Content-Type", "application/json");
 
-            expect(response.status).toBe(200);
+            expect(response.status)
+                .toBe(200);
         });
 
         it("should return JSON content type", async () => {
@@ -100,7 +125,8 @@ describe("routes/api", () => {
                 .send({ paragraphs: 1 })
                 .set("Content-Type", "application/json");
 
-            expect(response.type).toMatch(/json/);
+            expect(response.type)
+                .toMatch(/json/);
         });
 
         it("should return data from the Words model", async () => {
@@ -112,7 +138,8 @@ describe("routes/api", () => {
                 .send({ paragraphs: 2, sentences: 1 })
                 .set("Content-Type", "application/json");
 
-            expect(response.body.data).toEqual(mockData);
+            expect(response.body.data)
+                .toEqual(mockData);
         });
 
         it("should pass paragraphs parameter to Words model as integer", async () => {
@@ -123,9 +150,8 @@ describe("routes/api", () => {
                 .send({ paragraphs: "3" })
                 .set("Content-Type", "application/json");
 
-            expect(mockGet).toHaveBeenCalledWith(
-                expect.objectContaining({ paragraphs: 3 })
-            );
+            expect(mockGet)
+                .toHaveBeenCalledWith(expect.objectContaining({ paragraphs: 3 }));
         });
 
         it("should pass sentences parameter to Words model as integer", async () => {
@@ -136,9 +162,8 @@ describe("routes/api", () => {
                 .send({ sentences: "5" })
                 .set("Content-Type", "application/json");
 
-            expect(mockGet).toHaveBeenCalledWith(
-                expect.objectContaining({ sentences: 5 })
-            );
+            expect(mockGet)
+                .toHaveBeenCalledWith(expect.objectContaining({ sentences: 5 }));
         });
 
         it("should pass lorem parameter to Words model as integer", async () => {
@@ -149,9 +174,8 @@ describe("routes/api", () => {
                 .send({ lorem: "1" })
                 .set("Content-Type", "application/json");
 
-            expect(mockGet).toHaveBeenCalledWith(
-                expect.objectContaining({ lorem: 1 })
-            );
+            expect(mockGet)
+                .toHaveBeenCalledWith(expect.objectContaining({ lorem: 1 }));
         });
 
         it("should pass wyrd parameter to Words model as integer", async () => {
@@ -162,9 +186,8 @@ describe("routes/api", () => {
                 .send({ wyrd: "1" })
                 .set("Content-Type", "application/json");
 
-            expect(mockGet).toHaveBeenCalledWith(
-                expect.objectContaining({ wyrd: 1 })
-            );
+            expect(mockGet)
+                .toHaveBeenCalledWith(expect.objectContaining({ wyrd: 1 }));
         });
 
         it("should return 400 status when Words model throws RangeError", async () => {
@@ -175,23 +198,28 @@ describe("routes/api", () => {
                 .send({ paragraphs: 100 })
                 .set("Content-Type", "application/json");
 
-            expect(response.status).toBe(400);
+            expect(response.status)
+                .toBe(400);
         });
 
         it("should return error message when Words model throws RangeError", async () => {
-            mockGet.mockRejectedValue(new RangeError("The paragraphs parameter must be between 1 and 10"));
+            mockGet.mockRejectedValue(
+                new RangeError("The paragraphs parameter must be between 1 and 10"),
+            );
 
             const response = await request(app)
                 .post("/api")
                 .send({ paragraphs: 100 })
                 .set("Content-Type", "application/json");
 
-            expect(response.body.message).toBe("The paragraphs parameter must be between 1 and 10");
+            expect(response.body.message)
+                .toBe("The paragraphs parameter must be between 1 and 10");
         });
 
         it("should return 500 status when Words model throws generic error", async () => {
             // Suppress console.error for this test
-            const consoleSpy = jest.spyOn(console, "error").mockImplementation();
+            const consoleSpy = jest.spyOn(console, "error")
+                .mockImplementation();
 
             mockGet.mockRejectedValue(new Error("Database error"));
 
@@ -200,7 +228,8 @@ describe("routes/api", () => {
                 .send({ paragraphs: 1 })
                 .set("Content-Type", "application/json");
 
-            expect(response.status).toBe(500);
+            expect(response.status)
+                .toBe(500);
 
             consoleSpy.mockRestore();
         });
@@ -213,8 +242,10 @@ describe("routes/api", () => {
                 .send({})
                 .set("Content-Type", "application/json");
 
-            expect(response.status).toBe(200);
-            expect(mockGet).toHaveBeenCalled();
+            expect(response.status)
+                .toBe(200);
+            expect(mockGet)
+                .toHaveBeenCalled();
         });
 
         it("should handle request with all parameters", async () => {
@@ -230,12 +261,13 @@ describe("routes/api", () => {
                 })
                 .set("Content-Type", "application/json");
 
-            expect(mockGet).toHaveBeenCalledWith({
-                paragraphs: 2,
-                sentences: 3,
-                lorem: 1,
-                wyrd: 1,
-            });
+            expect(mockGet)
+                .toHaveBeenCalledWith({
+                    paragraphs: 2,
+                    sentences: 3,
+                    lorem: 1,
+                    wyrd: 1,
+                });
         });
     });
 });

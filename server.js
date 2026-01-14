@@ -19,7 +19,6 @@ app.listen(config.app.port, config.app.address, (error) => {
     }
 
     console.log(
-        "[info] server started\n" +
-            `[info] serving: ${config.app.address}:${config.app.port}`,
+        "[info] server started\n" + `[info] serving: ${config.app.address}:${config.app.port}`,
     );
 });

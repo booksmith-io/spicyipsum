@@ -1,7 +1,7 @@
 // base model for models
 
 class Base {
-    constructor() {
+    constructor () {
         this.dbh = require("./../lib/dbh");
         this._table = this.constructor.name.toLowerCase();
     }
@@ -18,13 +18,13 @@ class Base {
     async add (inserts) {
         return await this.dbh(this._table)
             .insert(inserts);
-    };
+    }
 
     async delete (selector) {
         return await this.dbh(this._table)
             .where(selector)
             .del();
-    };
+    }
 }
 
 module.exports.Base = Base;

@@ -4,14 +4,22 @@
         "port": 5000,
         "address": "0.0.0.0"
     },
-    "user_agent_blocks": [
-        "facebookexternalhit",
-        "facebookscraper",
-        "openai",
-        "OAI-SearchBot",
-        "anthropic",
-        "claude",
-        "amazonbot",
-        "Cortex-Xpanse"
-    ]
+    "ratelimits": {
+        "enabled": 0,
+        "requests_threshold": 7,
+        "block_seconds": 300
+    },
+    "user_agent_blocks": {
+        "enabled": 0,
+        "user_agents": [
+            "facebookexternalhit",
+            "facebookscraper",
+            "openai",
+            "OAI-SearchBot",
+            "anthropic",
+            "claude",
+            "amazonbot",
+            "Cortex-Xpanse"
+        ]
+    }
 }

@@ -52,9 +52,10 @@ router.post("/", async (req, res) => {
     }
 
     if (error) {
-        res.status(response.status.HTTP_BAD_REQUEST.code).json({
-            message: error,
-        });
+        res.status(response.status.HTTP_BAD_REQUEST.code)
+            .json({
+                message: error,
+            });
         return;
     }
 

@@ -9,7 +9,15 @@ jest.mock("../../lib/config", () => ({
         port: 3000,
         address: "localhost",
     },
-    user_agent_blocks: [],
+    ratelimits: {
+        enabled: 0,
+        requests_threshold: 7,
+        block_seconds: 300,
+    },
+    user_agent_blocks: {
+        enabled: 0,
+        user_agents: [],
+    },
 }));
 
 // Mock dbh (used by models)
@@ -31,7 +39,15 @@ describe("routes/about", () => {
                 port: 3000,
                 address: "localhost",
             },
-            user_agent_blocks: [],
+            ratelimits: {
+                enabled: 0,
+                requests_threshold: 7,
+                block_seconds: 300,
+            },
+            user_agent_blocks: {
+                enabled: 0,
+                user_agents: [],
+            },
         }));
         jest.doMock("../../lib/dbh", () => jest.fn());
         jest.doMock("morgan", () => () => (req, res, next) => next());
@@ -45,21 +61,27 @@ describe("routes/about", () => {
 
     describe("GET /about", () => {
         it("should return 200 status", async () => {
-            const response = await request(app).get("/about");
+            const response = await request(app)
+                .get("/about");
 
-            expect(response.status).toBe(200);
+            expect(response.status)
+                .toBe(200);
         });
 
         it("should return HTML content type", async () => {
-            const response = await request(app).get("/about");
+            const response = await request(app)
+                .get("/about");
 
-            expect(response.type).toMatch(/html/);
+            expect(response.type)
+                .toMatch(/html/);
         });
 
         it("should contain the About heading", async () => {
-            const response = await request(app).get("/about");
+            const response = await request(app)
+                .get("/about");
 
-            expect(response.text).toContain("<h2>About</h2>");
+            expect(response.text)
+                .toContain("<h2>About</h2>");
         });
     });
 });

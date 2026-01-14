@@ -1,8 +1,11 @@
 // Unit tests for models/base.js
 
-const mockInsert = jest.fn().mockResolvedValue([1]);
-const mockDel = jest.fn().mockResolvedValue(1);
-const mockWhere = jest.fn().mockReturnValue({ del: mockDel });
+const mockInsert = jest.fn()
+    .mockResolvedValue([1]);
+const mockDel = jest.fn()
+    .mockResolvedValue(1);
+const mockWhere = jest.fn()
+    .mockReturnValue({ del: mockDel });
 
 const mockDbh = jest.fn((table) => ({
     insert: mockInsert,
@@ -35,20 +38,23 @@ describe("models/base", () => {
         it("should set dbh from lib/dbh module", () => {
             const instance = new Base();
 
-            expect(instance.dbh).toBe(mockDbh);
+            expect(instance.dbh)
+                .toBe(mockDbh);
         });
 
         it("should set _table to lowercase class name", () => {
             const instance = new Base();
 
-            expect(instance._table).toBe("base");
+            expect(instance._table)
+                .toBe("base");
         });
 
         it("should set _table based on child class name", () => {
             class TestModel extends Base {}
             const instance = new TestModel();
 
-            expect(instance._table).toBe("testmodel");
+            expect(instance._table)
+                .toBe("testmodel");
         });
     });
 
@@ -59,7 +65,8 @@ describe("models/base", () => {
 
             await instance.add(inserts);
 
-            expect(mockDbh).toHaveBeenCalledWith("base");
+            expect(mockDbh)
+                .toHaveBeenCalledWith("base");
         });
 
         it("should call insert with the provided data", async () => {
@@ -68,7 +75,8 @@ describe("models/base", () => {
 
             await instance.add(inserts);
 
-            expect(mockInsert).toHaveBeenCalledWith(inserts);
+            expect(mockInsert)
+                .toHaveBeenCalledWith(inserts);
         });
 
         it("should return the result from insert", async () => {
@@ -78,19 +86,18 @@ describe("models/base", () => {
 
             const result = await instance.add({ name: "test" });
 
-            expect(result).toEqual(expectedResult);
+            expect(result)
+                .toEqual(expectedResult);
         });
 
         it("should handle multiple inserts", async () => {
             const instance = new Base();
-            const inserts = [
-                { name: "test1" },
-                { name: "test2" },
-            ];
+            const inserts = [{ name: "test1" }, { name: "test2" }];
 
             await instance.add(inserts);
 
-            expect(mockInsert).toHaveBeenCalledWith(inserts);
+            expect(mockInsert)
+                .toHaveBeenCalledWith(inserts);
         });
 
         it("should use correct table for child classes", async () => {
@@ -99,7 +106,8 @@ describe("models/base", () => {
 
             await instance.add({ text: "hello" });
 
-            expect(mockDbh).toHaveBeenCalledWith("words");
+            expect(mockDbh)
+                .toHaveBeenCalledWith("words");
         });
     });
 
@@ -110,7 +118,8 @@ describe("models/base", () => {
 
             await instance.delete(selector);
 
-            expect(mockDbh).toHaveBeenCalledWith("base");
+            expect(mockDbh)
+                .toHaveBeenCalledWith("base");
         });
 
         it("should call where with the selector", async () => {
@@ -119,7 +128,8 @@ describe("models/base", () => {
 
             await instance.delete(selector);
 
-            expect(mockWhere).toHaveBeenCalledWith(selector);
+            expect(mockWhere)
+                .toHaveBeenCalledWith(selector);
         });
 
         it("should call del after where", async () => {
@@ -128,7 +138,8 @@ describe("models/base", () => {
 
             await instance.delete(selector);
 
-            expect(mockDel).toHaveBeenCalled();
+            expect(mockDel)
+                .toHaveBeenCalled();
         });
 
         it("should return the number of deleted rows", async () => {
@@ -137,7 +148,8 @@ describe("models/base", () => {
 
             const result = await instance.delete({ type: "old" });
 
-            expect(result).toBe(5);
+            expect(result)
+                .toBe(5);
         });
 
         it("should handle complex selectors", async () => {
@@ -146,7 +158,8 @@ describe("models/base", () => {
 
             await instance.delete(selector);
 
-            expect(mockWhere).toHaveBeenCalledWith(selector);
+            expect(mockWhere)
+                .toHaveBeenCalledWith(selector);
         });
 
         it("should use correct table for child classes", async () => {
@@ -155,7 +168,8 @@ describe("models/base", () => {
 
             await instance.delete({ id: 1 });
 
-            expect(mockDbh).toHaveBeenCalledWith("words");
+            expect(mockDbh)
+                .toHaveBeenCalledWith("words");
         });
     });
 });

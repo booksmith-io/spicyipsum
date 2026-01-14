@@ -9,7 +9,15 @@ jest.mock("../../lib/config", () => ({
         port: 3000,
         address: "localhost",
     },
-    user_agent_blocks: [],
+    ratelimits: {
+        enabled: 0,
+        requests_threshold: 7,
+        block_seconds: 300,
+    },
+    user_agent_blocks: {
+        enabled: 0,
+        user_agents: [],
+    },
 }));
 
 // Mock dbh (used by models)
@@ -31,7 +39,15 @@ describe("routes/home", () => {
                 port: 3000,
                 address: "localhost",
             },
-            user_agent_blocks: [],
+            ratelimits: {
+                enabled: 0,
+                requests_threshold: 7,
+                block_seconds: 300,
+            },
+            user_agent_blocks: {
+                enabled: 0,
+                user_agents: [],
+            },
         }));
         jest.doMock("../../lib/dbh", () => jest.fn());
         jest.doMock("morgan", () => () => (req, res, next) => next());
@@ -45,42 +61,57 @@ describe("routes/home", () => {
 
     describe("GET /", () => {
         it("should return 200 status", async () => {
-            const response = await request(app).get("/");
+            const response = await request(app)
+                .get("/");
 
-            expect(response.status).toBe(200);
+            expect(response.status)
+                .toBe(200);
         });
 
         it("should return HTML content type", async () => {
-            const response = await request(app).get("/");
+            const response = await request(app)
+                .get("/");
 
-            expect(response.type).toMatch(/html/);
+            expect(response.type)
+                .toMatch(/html/);
         });
 
         it("should contain the ipsum form", async () => {
-            const response = await request(app).get("/");
+            const response = await request(app)
+                .get("/");
 
-            expect(response.text).toContain("get-ipsum-form");
-            expect(response.text).toContain('name="paragraphs"');
-            expect(response.text).toContain('name="sentences"');
+            expect(response.text)
+                .toContain("get-ipsum-form");
+            expect(response.text)
+                .toContain("name=\"paragraphs\"");
+            expect(response.text)
+                .toContain("name=\"sentences\"");
         });
 
         it("should contain the lorem checkbox", async () => {
-            const response = await request(app).get("/");
+            const response = await request(app)
+                .get("/");
 
-            expect(response.text).toContain('name="lorem"');
-            expect(response.text).toContain('type="checkbox"');
+            expect(response.text)
+                .toContain("name=\"lorem\"");
+            expect(response.text)
+                .toContain("type=\"checkbox\"");
         });
 
         it("should contain the wyrd checkbox", async () => {
-            const response = await request(app).get("/");
+            const response = await request(app)
+                .get("/");
 
-            expect(response.text).toContain('name="wyrd"');
+            expect(response.text)
+                .toContain("name=\"wyrd\"");
         });
 
         it("should contain the generate button", async () => {
-            const response = await request(app).get("/");
+            const response = await request(app)
+                .get("/");
 
-            expect(response.text).toContain("Generate");
+            expect(response.text)
+                .toContain("Generate");
         });
     });
 });
