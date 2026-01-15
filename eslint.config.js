@@ -3,7 +3,9 @@ import stylistic from "@stylistic/eslint-plugin";
 export default [
     {
         "ignores": [
-            "public/src/**",
+            "static/src/**",
+            "public/dist.css",
+            "public/dist.js",
             "package.json",
             "package-lock.json",
         ],
