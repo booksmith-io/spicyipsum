@@ -22,6 +22,10 @@ describe("lib/config", () => {
             enabled: 0,
             user_agents: ["badbot"],
         },
+        analytics: {
+            enabled: 0,
+            snippet: "",
+        },
         ...overrides,
     });
 
@@ -78,6 +82,10 @@ describe("lib/config", () => {
                     enabled: 0,
                     user_agents: ["bot"],
                 },
+                analytics: {
+                    enabled: 0,
+                    snippet: "",
+                },
             };
 
             fs.readFileSync.mockReturnValue(JSON.stringify(mockConfig));
@@ -106,6 +114,10 @@ describe("lib/config", () => {
                     enabled: 0,
                     user_agents: [],
                 },
+                analytics: {
+                    enabled: 0,
+                    snippet: "",
+                },
             };
 
             fs.readFileSync.mockReturnValue(JSON.stringify(mockConfig));
@@ -126,6 +138,10 @@ describe("lib/config", () => {
                 user_agent_blocks: {
                     enabled: 0,
                     user_agents: [],
+                },
+                analytics: {
+                    enabled: 0,
+                    snippet: "",
                 },
             };
 
@@ -149,6 +165,10 @@ describe("lib/config", () => {
                     enabled: 0,
                     user_agents: [],
                 },
+                analytics: {
+                    enabled: 0,
+                    snippet: "",
+                },
             };
 
             fs.readFileSync.mockReturnValue(JSON.stringify(mockConfig));
@@ -171,6 +191,10 @@ describe("lib/config", () => {
                     enabled: 0,
                     user_agents: [],
                 },
+                analytics: {
+                    enabled: 0,
+                    snippet: "",
+                },
             };
 
             fs.readFileSync.mockReturnValue(JSON.stringify(mockConfig));
@@ -191,6 +215,10 @@ describe("lib/config", () => {
                 user_agent_blocks: {
                     enabled: 0,
                     user_agents: [],
+                },
+                analytics: {
+                    enabled: 0,
+                    snippet: "",
                 },
             };
 
@@ -214,6 +242,10 @@ describe("lib/config", () => {
                     enabled: 0,
                     user_agents: [],
                 },
+                analytics: {
+                    enabled: 0,
+                    snippet: "",
+                },
             };
 
             fs.readFileSync.mockReturnValue(JSON.stringify(mockConfig));
@@ -235,6 +267,10 @@ describe("lib/config", () => {
                 user_agent_blocks: {
                     enabled: 0,
                     user_agents: [],
+                },
+                analytics: {
+                    enabled: 0,
+                    snippet: "",
                 },
             };
 
@@ -258,6 +294,10 @@ describe("lib/config", () => {
                     enabled: 0,
                     user_agents: [],
                 },
+                analytics: {
+                    enabled: 0,
+                    snippet: "",
+                },
             };
 
             fs.readFileSync.mockReturnValue(JSON.stringify(mockConfig));
@@ -280,6 +320,10 @@ describe("lib/config", () => {
                     enabled: 0,
                     user_agents: [],
                 },
+                analytics: {
+                    enabled: 0,
+                    snippet: "",
+                },
             };
 
             fs.readFileSync.mockReturnValue(JSON.stringify(mockConfig));
@@ -300,6 +344,10 @@ describe("lib/config", () => {
                 user_agent_blocks: {
                     enabled: 0,
                     user_agents: [],
+                },
+                analytics: {
+                    enabled: 0,
+                    snippet: "",
                 },
             };
 
@@ -323,6 +371,10 @@ describe("lib/config", () => {
                     enabled: 0,
                     user_agents: [],
                 },
+                analytics: {
+                    enabled: 0,
+                    snippet: "",
+                },
             };
 
             fs.readFileSync.mockReturnValue(JSON.stringify(mockConfig));
@@ -344,6 +396,10 @@ describe("lib/config", () => {
                 user_agent_blocks: {
                     enabled: 0,
                     user_agents: [],
+                },
+                analytics: {
+                    enabled: 0,
+                    snippet: "",
                 },
             };
 
@@ -397,6 +453,10 @@ describe("lib/config", () => {
                     requests_threshold: 7,
                     block_seconds: 300,
                 },
+                analytics: {
+                    enabled: 0,
+                    snippet: "",
+                },
             };
 
             fs.readFileSync.mockReturnValue(JSON.stringify(mockConfig));
@@ -417,6 +477,10 @@ describe("lib/config", () => {
                 },
                 user_agent_blocks: {
                     user_agents: [],
+                },
+                analytics: {
+                    enabled: 0,
+                    snippet: "",
                 },
             };
 
@@ -440,6 +504,10 @@ describe("lib/config", () => {
                     enabled: "yes",
                     user_agents: [],
                 },
+                analytics: {
+                    enabled: 0,
+                    snippet: "",
+                },
             };
 
             fs.readFileSync.mockReturnValue(JSON.stringify(mockConfig));
@@ -460,6 +528,10 @@ describe("lib/config", () => {
                 },
                 user_agent_blocks: {
                     enabled: 0,
+                },
+                analytics: {
+                    enabled: 0,
+                    snippet: "",
                 },
             };
 
@@ -483,6 +555,10 @@ describe("lib/config", () => {
                     enabled: 0,
                     user_agents: "badbot",
                 },
+                analytics: {
+                    enabled: 0,
+                    snippet: "",
+                },
             };
 
             fs.readFileSync.mockReturnValue(JSON.stringify(mockConfig));
@@ -504,6 +580,10 @@ describe("lib/config", () => {
                 user_agent_blocks: {
                     enabled: 0,
                     user_agents: { bot: true },
+                },
+                analytics: {
+                    enabled: 0,
+                    snippet: "",
                 },
             };
 
@@ -561,6 +641,188 @@ describe("lib/config", () => {
         });
     });
 
+    describe("config validation - analytics section", () => {
+        it("should throw an error when analytics section is missing", () => {
+            const mockConfig = {
+                app: { port: 3000 },
+                ratelimits: {
+                    enabled: 0,
+                    requests_threshold: 7,
+                    block_seconds: 300,
+                },
+                user_agent_blocks: {
+                    enabled: 0,
+                    user_agents: [],
+                },
+            };
+
+            fs.readFileSync.mockReturnValue(JSON.stringify(mockConfig));
+
+            expect(() => {
+                require("../../lib/config");
+            })
+                .toThrow("config analytics section is required");
+        });
+
+        it("should throw an error when analytics enabled is missing", () => {
+            const mockConfig = {
+                app: { port: 3000 },
+                ratelimits: {
+                    enabled: 0,
+                    requests_threshold: 7,
+                    block_seconds: 300,
+                },
+                user_agent_blocks: {
+                    enabled: 0,
+                    user_agents: [],
+                },
+                analytics: {
+                    snippet: "",
+                },
+            };
+
+            fs.readFileSync.mockReturnValue(JSON.stringify(mockConfig));
+
+            expect(() => {
+                require("../../lib/config");
+            })
+                .toThrow("config analytics enabled is required");
+        });
+
+        it("should throw an error when analytics enabled is not 0 or 1", () => {
+            const mockConfig = {
+                app: { port: 3000 },
+                ratelimits: {
+                    enabled: 0,
+                    requests_threshold: 7,
+                    block_seconds: 300,
+                },
+                user_agent_blocks: {
+                    enabled: 0,
+                    user_agents: [],
+                },
+                analytics: {
+                    enabled: "yes",
+                    snippet: "",
+                },
+            };
+
+            fs.readFileSync.mockReturnValue(JSON.stringify(mockConfig));
+
+            expect(() => {
+                require("../../lib/config");
+            })
+                .toThrow("config analytics enabled must be either a true or false value");
+        });
+
+        it("should throw an error when analytics enabled is true boolean instead of 1", () => {
+            const mockConfig = {
+                app: { port: 3000 },
+                ratelimits: {
+                    enabled: 0,
+                    requests_threshold: 7,
+                    block_seconds: 300,
+                },
+                user_agent_blocks: {
+                    enabled: 0,
+                    user_agents: [],
+                },
+                analytics: {
+                    enabled: true,
+                    snippet: "",
+                },
+            };
+
+            fs.readFileSync.mockReturnValue(JSON.stringify(mockConfig));
+
+            expect(() => {
+                require("../../lib/config");
+            })
+                .toThrow("config analytics enabled must be either a true or false value");
+        });
+
+        it("should throw an error when snippet key is missing", () => {
+            const mockConfig = {
+                app: { port: 3000 },
+                ratelimits: {
+                    enabled: 0,
+                    requests_threshold: 7,
+                    block_seconds: 300,
+                },
+                user_agent_blocks: {
+                    enabled: 0,
+                    user_agents: [],
+                },
+                analytics: {
+                    enabled: 0,
+                },
+            };
+
+            fs.readFileSync.mockReturnValue(JSON.stringify(mockConfig));
+
+            expect(() => {
+                require("../../lib/config");
+            })
+                .toThrow("config analytics snippet key is required");
+        });
+
+        it("should accept analytics enabled as 0 with empty snippet", () => {
+            const mockConfig = createValidConfig({
+                analytics: {
+                    enabled: 0,
+                    snippet: "",
+                },
+            });
+
+            fs.readFileSync.mockReturnValue(JSON.stringify(mockConfig));
+
+            expect(() => {
+                require("../../lib/config");
+            }).not.toThrow();
+        });
+
+        it("should throw an error when enabled is 1 and snippet key is empty", () => {
+            const mockConfig = {
+                app: { port: 3000 },
+                ratelimits: {
+                    enabled: 0,
+                    requests_threshold: 7,
+                    block_seconds: 300,
+                },
+                user_agent_blocks: {
+                    enabled: 0,
+                    user_agents: [],
+                },
+                analytics: {
+                    enabled: 1,
+                    snippet: "",
+                },
+            };
+
+            fs.readFileSync.mockReturnValue(JSON.stringify(mockConfig));
+
+            expect(() => {
+                require("../../lib/config");
+            })
+                .toThrow("config analytics snippet value is required");
+        });
+
+        it("should accept analytics enabled as 1 with valid snippet", () => {
+            const mockConfig = createValidConfig({
+                analytics: {
+                    enabled: 1,
+                    snippet: "<script>analytics()</script>",
+                },
+            });
+
+            fs.readFileSync.mockReturnValue(JSON.stringify(mockConfig));
+
+            expect(() => {
+                require("../../lib/config");
+            }).not.toThrow();
+        });
+    });
+
     describe("config structure", () => {
         it("should preserve all config sections", () => {
             const mockConfig = createValidConfig({
@@ -571,6 +833,10 @@ describe("lib/config", () => {
                 user_agent_blocks: {
                     enabled: 1,
                     user_agents: ["claude", "anthropic", "facebookexternalhit"],
+                },
+                analytics: {
+                    enabled: 1,
+                    snippet: "<script>tracking()</script>",
                 },
             });
 
@@ -584,6 +850,8 @@ describe("lib/config", () => {
                 .toEqual(mockConfig.ratelimits);
             expect(config.user_agent_blocks)
                 .toEqual(mockConfig.user_agent_blocks);
+            expect(config.analytics)
+                .toEqual(mockConfig.analytics);
         });
 
         it("should preserve custom ratelimit values", () => {

@@ -1,6 +1,6 @@
 </div>
-<% if (node_env === 'production') { _%>
-<script data-goatcounter="https://tracking.adventurehound.io/count" async="" src="//tracking.adventurehound.io/count.js"></script>
+<% if (node_env === "production" && config.analytics.enabled === 1) { _%>
+<%- config.analytics.snippet %>
 <% } _%>
 <!-- poop -->
 </body>

@@ -21,5 +21,10 @@
             "amazonbot",
             "Cortex-Xpanse"
         ]
+    },
+    "analytics": {
+        "enabled": 0,
+        "snippet": "<script></script>",
+        "about_section": "We don't do stuff."
     }
 }
