@@ -35,6 +35,11 @@ jest.mock("../lib/config", () => ({
         enabled: 1,
         user_agents: ["badbot", "evilscraper", "claude", "anthropic"],
     },
+    analytics: {
+        enabled: 0,
+        snippet: "",
+        about_section: "",
+    },
 }));
 
 // Mock dbh (used by models)
@@ -92,6 +97,11 @@ describe("app.js middleware", () => {
             user_agent_blocks: {
                 enabled: 1,
                 user_agents: ["badbot", "evilscraper", "claude", "anthropic"],
+            },
+            analytics: {
+                enabled: 0,
+                snippet: "",
+                about_section: "",
             },
         }));
         jest.doMock("../lib/dbh", () => jest.fn());
@@ -679,6 +689,11 @@ describe("app.js middleware with ratelimiting disabled", () => {
                 enabled: 1,
                 user_agents: ["badbot"],
             },
+            analytics: {
+                enabled: 0,
+                snippet: "",
+                about_section: "",
+            },
         }));
         jest.doMock("../lib/dbh", () => jest.fn());
         jest.doMock("morgan", () => () => (req, res, next) => next());
@@ -768,6 +783,11 @@ describe("app.js middleware with user agent blocking disabled", () => {
                 enabled: 0,
                 user_agents: ["badbot", "evilscraper", "claude", "anthropic"],
             },
+            analytics: {
+                enabled: 0,
+                snippet: "",
+                about_section: "",
+            },
         }));
         jest.doMock("../lib/dbh", () => jest.fn());
         jest.doMock("morgan", () => () => (req, res, next) => next());
@@ -833,6 +853,11 @@ describe("app.js middleware with configurable ratelimit values", () => {
             user_agent_blocks: {
                 enabled: 0,
                 user_agents: [],
+            },
+            analytics: {
+                enabled: 0,
+                snippet: "",
+                about_section: "",
             },
         }));
         jest.doMock("../lib/dbh", () => jest.fn());
@@ -956,6 +981,11 @@ describe("app.js middleware with both features disabled", () => {
             user_agent_blocks: {
                 enabled: 0,
                 user_agents: ["badbot", "claude"],
+            },
+            analytics: {
+                enabled: 0,
+                snippet: "",
+                about_section: "",
             },
         }));
         jest.doMock("../lib/dbh", () => jest.fn());

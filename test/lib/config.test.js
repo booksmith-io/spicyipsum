@@ -10,8 +10,9 @@ describe("lib/config", () => {
     // Helper to create a valid config with all required sections
     const createValidConfig = (overrides = {}) => ({
         app: {
+            name: "spicyipsum",
             port: 3000,
-            host: "localhost",
+            address: "localhost",
         },
         ratelimits: {
             enabled: 0,
@@ -25,6 +26,7 @@ describe("lib/config", () => {
         analytics: {
             enabled: 0,
             snippet: "",
+            about_section: "",
         },
         ...overrides,
     });
@@ -104,12 +106,99 @@ describe("lib/config", () => {
             })
                 .toThrow("config app section is required");
         });
+
+        it("should throw an error when app name is missing", () => {
+            const mockConfig = {
+                app: {
+                    port: 3000,
+                    address: "localhost",
+                },
+                ratelimits: {
+                    enabled: 0,
+                    requests_threshold: 7,
+                    block_seconds: 300,
+                },
+                user_agent_blocks: {
+                    enabled: 0,
+                    user_agents: [],
+                },
+                analytics: {
+                    enabled: 0,
+                    snippet: "",
+                },
+            };
+
+            fs.readFileSync.mockReturnValue(JSON.stringify(mockConfig));
+
+            expect(() => {
+                require("../../lib/config");
+            })
+                .toThrow("config app name section is required");
+        });
+
+        it("should throw an error when app port is missing", () => {
+            const mockConfig = {
+                app: {
+                    name: "spicyipsum",
+                    address: "localhost",
+                },
+                ratelimits: {
+                    enabled: 0,
+                    requests_threshold: 7,
+                    block_seconds: 300,
+                },
+                user_agent_blocks: {
+                    enabled: 0,
+                    user_agents: [],
+                },
+                analytics: {
+                    enabled: 0,
+                    snippet: "",
+                },
+            };
+
+            fs.readFileSync.mockReturnValue(JSON.stringify(mockConfig));
+
+            expect(() => {
+                require("../../lib/config");
+            })
+                .toThrow("config app port section is required");
+        });
+
+        it("should throw an error when app address is missing", () => {
+            const mockConfig = {
+                app: {
+                    name: "spicyipsum",
+                    port: 3000,
+                },
+                ratelimits: {
+                    enabled: 0,
+                    requests_threshold: 7,
+                    block_seconds: 300,
+                },
+                user_agent_blocks: {
+                    enabled: 0,
+                    user_agents: [],
+                },
+                analytics: {
+                    enabled: 0,
+                    snippet: "",
+                },
+            };
+
+            fs.readFileSync.mockReturnValue(JSON.stringify(mockConfig));
+
+            expect(() => {
+                require("../../lib/config");
+            })
+                .toThrow("config app address section is required");
+        });
     });
 
     describe("config validation - ratelimits section", () => {
         it("should throw an error when ratelimits section is missing", () => {
             const mockConfig = {
-                app: { port: 3000 },
+                app: { name: "spicyipsum", port: 3000, address: "localhost" },
                 user_agent_blocks: {
                     enabled: 0,
                     user_agents: [],
@@ -130,7 +219,7 @@ describe("lib/config", () => {
 
         it("should throw an error when ratelimits enabled is missing", () => {
             const mockConfig = {
-                app: { port: 3000 },
+                app: { name: "spicyipsum", port: 3000, address: "localhost" },
                 ratelimits: {
                     requests_threshold: 7,
                     block_seconds: 300,
@@ -155,7 +244,7 @@ describe("lib/config", () => {
 
         it("should throw an error when ratelimits enabled is not 0 or 1", () => {
             const mockConfig = {
-                app: { port: 3000 },
+                app: { name: "spicyipsum", port: 3000, address: "localhost" },
                 ratelimits: {
                     enabled: 2,
                     requests_threshold: 7,
@@ -181,7 +270,7 @@ describe("lib/config", () => {
 
         it("should throw an error when ratelimits enabled is true boolean instead of 1", () => {
             const mockConfig = {
-                app: { port: 3000 },
+                app: { name: "spicyipsum", port: 3000, address: "localhost" },
                 ratelimits: {
                     enabled: true,
                     requests_threshold: 7,
@@ -207,7 +296,7 @@ describe("lib/config", () => {
 
         it("should throw an error when requests_threshold is missing", () => {
             const mockConfig = {
-                app: { port: 3000 },
+                app: { name: "spicyipsum", port: 3000, address: "localhost" },
                 ratelimits: {
                     enabled: 1,
                     block_seconds: 300,
@@ -232,7 +321,7 @@ describe("lib/config", () => {
 
         it("should throw an error when requests_threshold is not a positive integer", () => {
             const mockConfig = {
-                app: { port: 3000 },
+                app: { name: "spicyipsum", port: 3000, address: "localhost" },
                 ratelimits: {
                     enabled: 1,
                     requests_threshold: 0,
@@ -258,7 +347,7 @@ describe("lib/config", () => {
 
         it("should throw an error when requests_threshold is negative", () => {
             const mockConfig = {
-                app: { port: 3000 },
+                app: { name: "spicyipsum", port: 3000, address: "localhost" },
                 ratelimits: {
                     enabled: 1,
                     requests_threshold: -5,
@@ -284,7 +373,7 @@ describe("lib/config", () => {
 
         it("should throw an error when requests_threshold is a float", () => {
             const mockConfig = {
-                app: { port: 3000 },
+                app: { name: "spicyipsum", port: 3000, address: "localhost" },
                 ratelimits: {
                     enabled: 1,
                     requests_threshold: 7.5,
@@ -310,7 +399,7 @@ describe("lib/config", () => {
 
         it("should throw an error when requests_threshold is a string", () => {
             const mockConfig = {
-                app: { port: 3000 },
+                app: { name: "spicyipsum", port: 3000, address: "localhost" },
                 ratelimits: {
                     enabled: 1,
                     requests_threshold: "7",
@@ -336,7 +425,7 @@ describe("lib/config", () => {
 
         it("should throw an error when block_seconds is missing", () => {
             const mockConfig = {
-                app: { port: 3000 },
+                app: { name: "spicyipsum", port: 3000, address: "localhost" },
                 ratelimits: {
                     enabled: 1,
                     requests_threshold: 7,
@@ -361,7 +450,7 @@ describe("lib/config", () => {
 
         it("should throw an error when block_seconds is not a positive integer", () => {
             const mockConfig = {
-                app: { port: 3000 },
+                app: { name: "spicyipsum", port: 3000, address: "localhost" },
                 ratelimits: {
                     enabled: 1,
                     requests_threshold: 7,
@@ -387,7 +476,7 @@ describe("lib/config", () => {
 
         it("should throw an error when block_seconds is negative", () => {
             const mockConfig = {
-                app: { port: 3000 },
+                app: { name: "spicyipsum", port: 3000, address: "localhost" },
                 ratelimits: {
                     enabled: 1,
                     requests_threshold: 7,
@@ -447,7 +536,7 @@ describe("lib/config", () => {
     describe("config validation - user_agent_blocks section", () => {
         it("should throw an error when user_agent_blocks section is missing", () => {
             const mockConfig = {
-                app: { port: 3000 },
+                app: { name: "spicyipsum", port: 3000, address: "localhost" },
                 ratelimits: {
                     enabled: 0,
                     requests_threshold: 7,
@@ -469,7 +558,7 @@ describe("lib/config", () => {
 
         it("should throw an error when user_agent_blocks enabled is missing", () => {
             const mockConfig = {
-                app: { port: 3000 },
+                app: { name: "spicyipsum", port: 3000, address: "localhost" },
                 ratelimits: {
                     enabled: 0,
                     requests_threshold: 7,
@@ -494,7 +583,7 @@ describe("lib/config", () => {
 
         it("should throw an error when user_agent_blocks enabled is not 0 or 1", () => {
             const mockConfig = {
-                app: { port: 3000 },
+                app: { name: "spicyipsum", port: 3000, address: "localhost" },
                 ratelimits: {
                     enabled: 0,
                     requests_threshold: 7,
@@ -520,7 +609,7 @@ describe("lib/config", () => {
 
         it("should throw an error when user_agents is missing", () => {
             const mockConfig = {
-                app: { port: 3000 },
+                app: { name: "spicyipsum", port: 3000, address: "localhost" },
                 ratelimits: {
                     enabled: 0,
                     requests_threshold: 7,
@@ -545,7 +634,7 @@ describe("lib/config", () => {
 
         it("should throw an error when user_agents is not an array", () => {
             const mockConfig = {
-                app: { port: 3000 },
+                app: { name: "spicyipsum", port: 3000, address: "localhost" },
                 ratelimits: {
                     enabled: 0,
                     requests_threshold: 7,
@@ -571,7 +660,7 @@ describe("lib/config", () => {
 
         it("should throw an error when user_agents is an object", () => {
             const mockConfig = {
-                app: { port: 3000 },
+                app: { name: "spicyipsum", port: 3000, address: "localhost" },
                 ratelimits: {
                     enabled: 0,
                     requests_threshold: 7,
@@ -644,7 +733,7 @@ describe("lib/config", () => {
     describe("config validation - analytics section", () => {
         it("should throw an error when analytics section is missing", () => {
             const mockConfig = {
-                app: { port: 3000 },
+                app: { name: "spicyipsum", port: 3000, address: "localhost" },
                 ratelimits: {
                     enabled: 0,
                     requests_threshold: 7,
@@ -666,7 +755,7 @@ describe("lib/config", () => {
 
         it("should throw an error when analytics enabled is missing", () => {
             const mockConfig = {
-                app: { port: 3000 },
+                app: { name: "spicyipsum", port: 3000, address: "localhost" },
                 ratelimits: {
                     enabled: 0,
                     requests_threshold: 7,
@@ -691,7 +780,7 @@ describe("lib/config", () => {
 
         it("should throw an error when analytics enabled is not 0 or 1", () => {
             const mockConfig = {
-                app: { port: 3000 },
+                app: { name: "spicyipsum", port: 3000, address: "localhost" },
                 ratelimits: {
                     enabled: 0,
                     requests_threshold: 7,
@@ -717,7 +806,7 @@ describe("lib/config", () => {
 
         it("should throw an error when analytics enabled is true boolean instead of 1", () => {
             const mockConfig = {
-                app: { port: 3000 },
+                app: { name: "spicyipsum", port: 3000, address: "localhost" },
                 ratelimits: {
                     enabled: 0,
                     requests_threshold: 7,
@@ -743,7 +832,7 @@ describe("lib/config", () => {
 
         it("should throw an error when snippet key is missing", () => {
             const mockConfig = {
-                app: { port: 3000 },
+                app: { name: "spicyipsum", port: 3000, address: "localhost" },
                 ratelimits: {
                     enabled: 0,
                     requests_threshold: 7,
@@ -771,6 +860,7 @@ describe("lib/config", () => {
                 analytics: {
                     enabled: 0,
                     snippet: "",
+                    about_section: "",
                 },
             });
 
@@ -783,7 +873,7 @@ describe("lib/config", () => {
 
         it("should throw an error when enabled is 1 and snippet key is empty", () => {
             const mockConfig = {
-                app: { port: 3000 },
+                app: { name: "spicyipsum", port: 3000, address: "localhost" },
                 ratelimits: {
                     enabled: 0,
                     requests_threshold: 7,
@@ -796,6 +886,7 @@ describe("lib/config", () => {
                 analytics: {
                     enabled: 1,
                     snippet: "",
+                    about_section: "",
                 },
             };
 
@@ -812,6 +903,7 @@ describe("lib/config", () => {
                 analytics: {
                     enabled: 1,
                     snippet: "<script>analytics()</script>",
+                    about_section: "",
                 },
             });
 
@@ -821,14 +913,41 @@ describe("lib/config", () => {
                 require("../../lib/config");
             }).not.toThrow();
         });
+
+        it("should throw an error when about_section key is missing", () => {
+            const mockConfig = {
+                app: { name: "spicyipsum", port: 3000, address: "localhost" },
+                ratelimits: {
+                    enabled: 0,
+                    requests_threshold: 7,
+                    block_seconds: 300,
+                },
+                user_agent_blocks: {
+                    enabled: 0,
+                    user_agents: [],
+                },
+                analytics: {
+                    enabled: 0,
+                    snippet: "",
+                },
+            };
+
+            fs.readFileSync.mockReturnValue(JSON.stringify(mockConfig));
+
+            expect(() => {
+                require("../../lib/config");
+            })
+                .toThrow("config analytics about_section key is required");
+        });
     });
 
     describe("config structure", () => {
         it("should preserve all config sections", () => {
             const mockConfig = createValidConfig({
                 app: {
+                    name: "spicyipsum",
                     port: 8080,
-                    host: "0.0.0.0",
+                    address: "0.0.0.0",
                 },
                 user_agent_blocks: {
                     enabled: 1,
@@ -837,6 +956,7 @@ describe("lib/config", () => {
                 analytics: {
                     enabled: 1,
                     snippet: "<script>tracking()</script>",
+                    about_section: "",
                 },
             });
 

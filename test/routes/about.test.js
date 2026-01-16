@@ -18,6 +18,11 @@ jest.mock("../../lib/config", () => ({
         enabled: 0,
         user_agents: [],
     },
+    analytics: {
+        enabled: 0,
+        snippet: "",
+        about_section: "",
+    },
 }));
 
 // Mock dbh (used by models)
@@ -47,6 +52,11 @@ describe("routes/about", () => {
             user_agent_blocks: {
                 enabled: 0,
                 user_agents: [],
+            },
+            analytics: {
+                enabled: 0,
+                snippet: "",
+                about_section: "",
             },
         }));
         jest.doMock("../../lib/dbh", () => jest.fn());
@@ -82,6 +92,56 @@ describe("routes/about", () => {
 
             expect(response.text)
                 .toContain("<h2>About</h2>");
+        });
+
+        it("should not render about_section when empty", async () => {
+            const response = await request(app)
+                .get("/about");
+
+            // The paragraph containing about_section should not be present
+            // when about_section is empty
+            expect(response.text)
+                .not.toMatch(/<p><%- config\.analytics\.about_section %><\/p>/);
+        });
+    });
+
+    describe("GET /about with about_section content", () => {
+        beforeEach(() => {
+            jest.resetModules();
+
+            jest.doMock("../../lib/config", () => ({
+                app: {
+                    name: "spicyipsum",
+                    port: 3000,
+                    address: "localhost",
+                },
+                ratelimits: {
+                    enabled: 0,
+                    requests_threshold: 7,
+                    block_seconds: 300,
+                },
+                user_agent_blocks: {
+                    enabled: 0,
+                    user_agents: [],
+                },
+                analytics: {
+                    enabled: 0,
+                    snippet: "",
+                    about_section: "This is custom about section content for testing.",
+                },
+            }));
+            jest.doMock("../../lib/dbh", () => jest.fn());
+            jest.doMock("morgan", () => () => (req, res, next) => next());
+
+            app = require("../../app");
+        });
+
+        it("should render about_section content when provided", async () => {
+            const response = await request(app)
+                .get("/about");
+
+            expect(response.text)
+                .toContain("This is custom about section content for testing.");
         });
     });
 });
