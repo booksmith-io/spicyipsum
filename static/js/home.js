@@ -2,8 +2,9 @@
  */
 
 $(function () {
-    document.querySelector("form#get-ipsum-form")
-        .addEventListener("submit", async function (e) {
+    const get_ipsum_form = document.querySelector("form#get-ipsum-form");
+    if (get_ipsum_form !== null) {
+        get_ipsum_form.addEventListener("submit", async function (e) {
             e.preventDefault();
 
             const alert_div = document.querySelector("#alert");
@@ -60,9 +61,11 @@ $(function () {
 
             return;
         });
+    }
 
-    document.querySelector("button#copy")
-        .addEventListener("click", async function (e) {
+    const button_copy = document.querySelector("button#copy");
+    if (button_copy !== null) {
+        button_copy.addEventListener("click", async function (e) {
             const copy_button = e.target;
 
             const spicyipsum_textarea = document.querySelector("div#spicyipsum textarea");
@@ -91,4 +94,5 @@ $(function () {
 
             return;
         });
+    }
 });
