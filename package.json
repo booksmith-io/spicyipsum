@@ -36,6 +36,7 @@
     "upgrade_database": "make upgrade_database",
     "test": "jest",
     "lint": "node node_modules/eslint/bin/eslint.js . --fix",
+    "lint:check": "node node_modules/eslint/bin/eslint.js .",
     "build": "node node_modules/gulp-cli/bin/gulp.js build"
   }
 }
